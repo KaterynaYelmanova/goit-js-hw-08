@@ -72,38 +72,29 @@ galleryList.addEventListener("click", (event) => {
   const target = event.target;
 
   if (target.nodeName === "IMG") {
-    const originalImageSrs = target.getAttribute("data-source");
+    const originalImageSrc = target.getAttribute("data-source");
     const instance = basicLightbox.create(
       `
-          <img src=${event.target.dataset.source} 
-            width=800 height=600>
+          <img src="${event.target.dataset.source}" 
+            width="800" height="600">
           `,
       {
         onShow: (instance) => {
-          document.addEventListener("keydown", function (event) {
+          const keydownHandler = function (event) {
             if (event.key === "Escape") {
               instance.close();
+              document.removeEventListener("keydown", keydownHandler);
             }
-          });
-        },
-        onClose: (instance) => {
-          document.removeEventListener("keydown", function (event) {
-            if (event.key === "Escape") {
-              instance.close();
-            }
-          });
-          document.addEventListener("keydown", (event) => {
-            if (event.key === "Escape") {
-              instance.close();
-            }
-          });
+          };
+          document.addEventListener("keydown", keydownHandler);
         },
       }
     );
     instance.show();
-    //console.log(originalImageSrs);
+    //console.log(originalImageSrc);
   }
 });
+
 const fragment = document.createDocumentFragment();
 images.forEach((image) => {
   const galleryItem = document.createElement("li");
@@ -121,6 +112,7 @@ images.forEach((image) => {
 
   link.appendChild(img);
   galleryItem.appendChild(link);
-  galleryList.appendChild(galleryItem);
+  fragment.appendChild(galleryItem);
 });
+
 galleryList.appendChild(fragment);
